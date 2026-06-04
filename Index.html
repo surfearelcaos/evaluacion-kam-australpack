@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Perfil — KAM Materiales | Austral Pack</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --red:#C8252A; --dark-red:#8B1519; --light-red:#FBEAEA;
+    --mid-red:#E8A0A2; --black:#111111; --gray-dark:#333333;
+    --gray-mid:#666666; --gray-light:#F4F4F4; --white:#FFFFFF; --border:#E2E2E2;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#FAFAFA; color:var(--black); min-height:100vh; }
+
+  .header { background:var(--dark-red); padding:22px 40px; display:flex; align-items:center; justify-content:space-between; }
+  .header-logo { display:flex; flex-direction:column; line-height:1.1; }
+  .header-logo .bt { font-size:17px; font-weight:600; color:var(--mid-red); letter-spacing:.06em; }
+  .header-logo .bb { font-size:17px; font-weight:600; color:white; letter-spacing:.06em; }
+  .header-title { text-align:right; }
+  .header-title h1 { font-family:'DM Serif Display',serif; font-size:18px; font-weight:400; color:white; }
+  .header-title p { font-size:11px; color:var(--mid-red); margin-top:3px; letter-spacing:.04em; }
+
+  .progress-wrap { background:rgba(0,0,0,.15); height:4px; }
+  .progress-bar { height:4px; background:white; width:0%; transition:width .5s ease; }
+
+  /* ── SHARED CARD WRAPPER ── */
+  .screen-wrap { max-width:680px; margin:56px auto; padding:0 24px; }
+  .card { background:white; border:1px solid var(--border); border-radius:14px; padding:44px; }
+
+  /* ── INTRO ── */
+  .intro-eyebrow { font-size:11px; font-weight:600; color:var(--red); letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; }
+  .card h2 { font-family:'DM Serif Display',serif; font-size:28px; color:var(--dark-red); line-height:1.2; margin-bottom:18px; }
+  .card p { font-size:14px; color:var(--gray-mid); line-height:1.7; margin-bottom:12px; }
+  .intro-meta { display:flex; gap:20px; flex-wrap:wrap; margin:24px 0; padding:18px; background:var(--light-red); border-radius:10px; }
+  .intro-meta-item { display:flex; flex-direction:column; gap:3px; }
+  .intro-meta-item .lbl { font-size:10px; color:var(--dark-red); font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
+  .intro-meta-item .val { font-size:14px; color:var(--dark-red); font-weight:500; }
+  .field { margin:20px 0; }
+  .field label { display:block; font-size:13px; font-weight:600; color:var(--gray-dark); margin-bottom:7px; }
+  .field input { width:100%; padding:12px 15px; border:1.5px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--black); background:white; outline:none; transition:border-color .2s; }
+  .field input:focus { border-color:var(--red); }
+  .role-row { display:flex; gap:12px; margin-top:4px; }
+  .role-opt { flex:1; cursor:pointer; }
+  .role-opt input { display:none; }
+  .role-lbl { display:flex; flex-direction:column; align-items:center; gap:7px; padding:15px 10px; border:1.5px solid var(--border); border-radius:10px; background:white; transition:all .2s; user-select:none; }
+  .role-opt:hover .role-lbl { border-color:var(--mid-red); background:var(--light-red); }
+  .role-opt input:checked + .role-lbl { border-color:var(--red); background:var(--light-red); box-shadow:0 0 0 3px rgba(200,37,42,.1); }
+  .role-icon { font-size:20px; }
+  .role-text { font-size:13px; font-weight:600; color:var(--gray-dark); }
+  .role-opt input:checked + .role-lbl .role-text { color:var(--red); }
+
+  /* ── BUTTONS ── */
+  .btn { background:var(--red); color:white; border:none; padding:14px 32px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s,transform .1s; display:inline-flex; align-items:center; gap:8px; }
+  .btn:hover { background:var(--dark-red); }
+  .btn:active { transform:scale(.98); }
+  .btn:disabled { background:#ccc; cursor:not-allowed; }
+  .btn-ghost { background:transparent; color:var(--red); border:1.5px solid var(--red); padding:11px 24px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all .2s; }
+  .btn-ghost:hover { background:var(--light-red); }
+
+  /* ── INSTRUCTIONS SCREEN ── */
+  .instr-section { margin-bottom:32px; }
+  .instr-section h3 { font-size:14px; font-weight:700; color:var(--dark-red); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .instr-section h3 .tag { background:var(--dark-red); color:white; font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px; letter-spacing:.06em; }
+  .instr-desc { font-size:14px; color:var(--gray-mid); line-height:1.7; margin-bottom:16px; }
+  .example-box { background:var(--gray-light); border-radius:10px; padding:20px; border:1px solid var(--border); }
+  .example-label { font-size:10px; font-weight:700; color:var(--gray-mid); letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px; }
+  .example-q { font-size:14px; color:var(--black); font-weight:500; margin-bottom:14px; line-height:1.5; }
+  /* likert demo */
+  .demo-likert { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .demo-lbl-row { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:4px; }
+  .demo-lbl { font-size:9px; color:var(--gray-mid); text-align:center; line-height:1.3; }
+  .demo-btn { padding:12px 6px; border:1.5px solid var(--border); border-radius:8px; background:white; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:var(--gray-mid); transition:all .15s; text-align:center; }
+  .demo-btn:hover { border-color:var(--red); background:var(--light-red); color:var(--red); }
+  .demo-btn.sel { background:var(--red); border-color:var(--red); color:white; }
+  /* sit demo */
+  .demo-sit { display:flex; flex-direction:column; gap:8px; }
+  .demo-sopt { padding:12px 16px; border:1.5px solid var(--border); border-radius:8px; background:white; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--gray-dark); line-height:1.5; display:flex; gap:10px; transition:all .15s; }
+  .demo-sopt:hover { border-color:var(--red); background:var(--light-red); }
+  .demo-sopt.sel { background:var(--red); border-color:var(--red); color:white; }
+  .demo-letter { font-weight:700; font-size:12px; min-width:16px; opacity:.6; }
+  .demo-sopt.sel .demo-letter { opacity:1; }
+  .instr-note { background:var(--light-red); border-radius:8px; padding:14px 16px; font-size:13px; color:var(--dark-red); line-height:1.6; margin-top:16px; }
+  .instr-divider { border:none; border-top:1px solid var(--border); margin:28px 0; }
+  .instr-cta { text-align:center; padding-top:8px; }
+  .instr-cta p { font-size:13px; color:var(--gray-mid); margin-bottom:16px; }
+
+  /* ── QUESTIONS ── */
+  #screen-questions { display:none; }
+  .q-wrap { max-width:680px; margin:0 auto; padding:40px 24px 80px; }
+  .q-top { display:flex; align-items:center; justify-content:flex-end; margin-bottom:16px; }
+  .q-counter-pill { background:var(--dark-red); color:white; font-size:13px; font-weight:600; padding:5px 14px; border-radius:20px; }
+  .q-progress-bar-wrap { background:var(--gray-light); height:6px; border-radius:3px; margin-bottom:28px; overflow:hidden; }
+  .q-progress-bar-fill { height:6px; background:var(--red); border-radius:3px; transition:width .4s ease; }
+  .q-card { background:white; border:1px solid var(--border); border-radius:14px; padding:36px; animation:slideIn .3s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+  .q-context { font-size:14px; color:var(--gray-mid); line-height:1.65; margin-bottom:18px; padding:14px 16px; background:var(--gray-light); border-radius:8px; border-left:3px solid var(--mid-red); font-style:italic; }
+  .q-text { font-size:17px; color:var(--black); line-height:1.5; margin-bottom:24px; font-weight:500; }
+  .likert-wrap { display:flex; flex-direction:column; gap:6px; }
+  .likert-labels-row { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:2px; }
+  .lbl-txt { font-size:10px; color:var(--gray-mid); text-align:center; line-height:1.3; }
+  .likert-btns { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .lbtn { padding:16px 8px; border:1.5px solid var(--border); border-radius:10px; background:white; cursor:pointer; transition:all .15s; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; color:var(--gray-mid); }
+  .lbtn:hover { border-color:var(--red); background:var(--light-red); color:var(--red); }
+  .lbtn.sel { background:var(--red); border-color:var(--red); color:white; }
+  .sit-opts { display:flex; flex-direction:column; gap:10px; }
+  .sbtn { padding:14px 18px; border:1.5px solid var(--border); border-radius:10px; background:white; cursor:pointer; transition:all .15s; text-align:left; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gray-dark); line-height:1.55; display:flex; gap:12px; align-items:flex-start; }
+  .sbtn:hover { border-color:var(--red); background:var(--light-red); }
+  .sbtn.sel { background:var(--red); border-color:var(--red); color:white; }
+  .s-letter { font-weight:700; font-size:13px; min-width:18px; margin-top:1px; opacity:.7; }
+  .sbtn.sel .s-letter { opacity:1; }
+
+  /* ── RESULTS ── */
+  #screen-results { display:none; padding:48px 32px; max-width:880px; margin:0 auto; }
+  .results-hdr { text-align:center; margin-bottom:44px; }
+  .results-hdr .ey { font-size:11px; font-weight:700; color:var(--red); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; }
+  .results-hdr h2 { font-family:'DM Serif Display',serif; font-size:30px; color:var(--dark-red); margin-bottom:6px; }
+  .results-hdr p { font-size:14px; color:var(--gray-mid); }
+  .rg { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:28px; }
+  .dc { background:white; border:1px solid var(--border); border-radius:12px; padding:22px; }
+  .dc.fw { grid-column:1/-1; }
+  .dc-hdr { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+  .dc-name { font-size:11px; font-weight:700; color:var(--gray-mid); letter-spacing:.08em; text-transform:uppercase; margin-bottom:3px; }
+  .dc-label { font-family:'DM Serif Display',serif; font-size:19px; color:var(--dark-red); }
+  .badge { color:white; font-size:21px; font-weight:700; padding:7px 13px; border-radius:8px; min-width:54px; text-align:center; }
+  .badge.high { background:var(--red); } .badge.mid { background:#B0703A; } .badge.low { background:#888; }
+  .sbar { height:6px; background:var(--gray-light); border-radius:3px; margin:10px 0 7px; overflow:hidden; }
+  .sfill { height:100%; background:var(--red); border-radius:3px; transition:width 1s ease; }
+  .di { font-size:13px; color:var(--gray-mid); line-height:1.6; margin-top:6px; }
+  .di strong { color:var(--dark-red); }
+  .alert { padding:14px 18px; border-radius:8px; font-size:14px; line-height:1.6; margin-bottom:10px; }
+  .alert.green  { background:#E8F5E9; border-left:4px solid #4CAF50; color:#2E7D32; }
+  .alert.yellow { background:#FFF8E1; border-left:4px solid #FFC107; color:#7B6000; }
+  .alert.red    { background:var(--light-red); border-left:4px solid var(--red); color:var(--dark-red); }
+  .sdiv { font-size:11px; font-weight:700; color:var(--red); letter-spacing:.1em; text-transform:uppercase; margin:32px 0 14px; display:flex; align-items:center; gap:12px; }
+  .sdiv::after { content:''; flex:1; height:1px; background:var(--border); }
+  .r-actions { display:flex; gap:12px; margin-top:28px; justify-content:center; }
+
+  /* ── THANK YOU ── */
+  #screen-thankyou { display:none; }
+  .ty-wrap { max-width:520px; margin:80px auto; padding:0 24px; text-align:center; }
+
+  @media print {
+    .header,.progress-wrap { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .r-actions { display:none; }
+    #screen-intro,#screen-instructions,#screen-questions,#screen-thankyou { display:none !important; }
+    #screen-results { display:block !important; }
+  }
+  @media(max-width:640px) {
+    .rg { grid-template-columns:1fr; }
+    .q-wrap { padding:28px 16px 60px; }
+    .q-card { padding:24px; }
+    .header { padding:18px 20px; }
+    .card { padding:28px 20px; }
+    .demo-likert,.demo-lbl-row { grid-template-columns:repeat(5,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo"><span class="bt">AUSTRAL</span><span class="bb">PACK</span></div>
+  <div class="header-title">
+    <h1>Evaluación de Perfil Profesional</h1>
+    <p>KAM Materiales · Proceso de Selección 2026</p>
+  </div>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<!-- ═══ PANTALLA 1: INTRO ═══════════════════════════════════════════ -->
+<div id="screen-intro">
+  <div class="screen-wrap">
+    <div class="card">
+      <div class="intro-eyebrow">Austral Pack S.A. · Área de Personas</div>
+      <h2>Evaluación de perfil — KAM Materiales</h2>
+      <p>Esta evaluación forma parte del proceso de selección para el cargo de KAM Materiales en Austral Pack. Su objetivo es ayudarnos a conocer mejor tu forma de trabajo, tus tendencias naturales y cómo te desenvuelves en distintas situaciones laborales.</p>
+      <p>No hay respuestas correctas o incorrectas — responde con honestidad según cómo actúas habitualmente, no según cómo crees que deberías actuar.</p>
+      <div class="intro-meta">
+        <div class="intro-meta-item"><span class="lbl">Preguntas</span><span class="val">48 ítems</span></div>
+        <div class="intro-meta-item"><span class="lbl">Tiempo estimado</span><span class="val">15–18 minutos</span></div>
+        <div class="intro-meta-item"><span class="lbl">Formato</span><span class="val">Una pregunta a la vez</span></div>
+        <div class="intro-meta-item"><span class="lbl">Confidencialidad</span><span class="val">Uso interno RRHH</span></div>
+      </div>
+      <div class="field">
+        <label>Estoy respondiendo como</label>
+        <div class="role-row">
+          <label class="role-opt"><input type="radio" name="role" value="postulante" onchange="onRoleChange()"><span class="role-lbl"><span class="role-icon">👤</span><span class="role-text">Postulante</span></span></label>
+          <label class="role-opt"><input type="radio" name="role" value="reclutador" onchange="onRoleChange()"><span class="role-lbl"><span class="role-icon">🔑</span><span class="role-text">Reclutador</span></span></label>
+        </div>
+      </div>
+      <div class="field" id="name-field" style="display:none;">
+        <label for="candidateName">Nombre completo</label>
+        <input type="text" id="candidateName" placeholder="Ingresa tu nombre completo" autocomplete="off" oninput="checkStartBtn()">
+      </div>
+      <div class="field" id="password-field" style="display:none;">
+        <label for="recruiterPass">Contraseña de acceso</label>
+        <input type="password" id="recruiterPass" placeholder="Ingresa la contraseña" autocomplete="off" oninput="checkStartBtn()" onkeydown="if(event.key==='Enter')goToInstructions()">
+        <div id="pass-error" style="color:var(--red);font-size:12px;margin-top:6px;display:none;">Contraseña incorrecta.</div>
+      </div>
+      <button class="btn" onclick="goToInstructions()" id="startBtn" disabled>Continuar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PANTALLA 2: INSTRUCCIONES + PRÁCTICA ═══════════════════════ -->
+<div id="screen-instructions" style="display:none;">
+  <div class="screen-wrap" style="max-width:720px;">
+    <div class="card">
+      <div class="intro-eyebrow">Antes de comenzar</div>
+      <h2>Cómo responder este cuestionario</h2>
+      <p>El cuestionario tiene dos tipos de preguntas. Aquí te explicamos cada uno con un ejemplo que puedes probar antes de empezar.</p>
+
+      <hr class="instr-divider">
+
+      <!-- TIPO 1: LIKERT -->
+      <div class="instr-section">
+        <h3><span class="tag">TIPO 1</span> Escala de acuerdo</h3>
+        <p class="instr-desc">Se te presenta una afirmación. Debes indicar en qué medida te describe, usando una escala del <strong>1 al 5</strong>: donde 1 es "Totalmente en desacuerdo" y 5 es "Totalmente de acuerdo". Al seleccionar una opción, la pregunta avanza automáticamente.</p>
+        <div class="example-box">
+          <div class="example-label">Ejemplo — pruébalo tú</div>
+          <div class="example-q">Prefiero tomar decisiones rápidas y ajustar sobre la marcha, antes que esperar a tener toda la información.</div>
+          <div class="demo-lbl-row">
+            <div class="demo-lbl">No me representa en absoluto</div>
+            <div class="demo-lbl"></div>
+            <div class="demo-lbl"></div>
+            <div class="demo-lbl"></div>
+            <div class="demo-lbl">Me representa plenamente</div>
+          </div>
+          <div class="demo-likert" id="demoLikert">
+            <button class="demo-btn" onclick="demoLikertPick(this)">1</button>
+            <button class="demo-btn" onclick="demoLikertPick(this)">2</button>
+            <button class="demo-btn" onclick="demoLikertPick(this)">3</button>
+            <button class="demo-btn" onclick="demoLikertPick(this)">4</button>
+            <button class="demo-btn" onclick="demoLikertPick(this)">5</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="instr-divider">
+
+      <!-- TIPO 2: SITUACIONAL -->
+      <div class="instr-section">
+        <h3><span class="tag">TIPO 2</span> Situación con alternativas</h3>
+        <p class="instr-desc">Se te describe una situación concreta y debes elegir <strong>una sola alternativa</strong> (A, B, C o D) que represente mejor cómo actuarías en ese contexto. No hay respuesta correcta — elige la que más se acerca a tu comportamiento real.</p>
+        <div class="example-box">
+          <div class="example-label">Ejemplo — pruébalo tú</div>
+          <div class="q-context" style="margin-bottom:14px;">Tienes una reunión agendada a las 9 AM y a las 8:45 te avisan que se pospone sin fecha confirmada.</div>
+          <div class="example-q">¿Qué haces con ese tiempo liberado?</div>
+          <div class="demo-sit" id="demoSit">
+            <div class="demo-sopt" onclick="demoSitPick(this)"><span class="demo-letter">A</span><span>Reviso mi lista de pendientes y ataco la tarea más importante que tenía postergada.</span></div>
+            <div class="demo-sopt" onclick="demoSitPick(this)"><span class="demo-letter">B</span><span>Aprovecho para adelantar correos o seguimientos que tenía pendientes.</span></div>
+            <div class="demo-sopt" onclick="demoSitPick(this)"><span class="demo-letter">C</span><span>Tomo un descanso — si liberaron el tiempo, lo uso para recargar energías.</span></div>
+            <div class="demo-sopt" onclick="demoSitPick(this)"><span class="demo-letter">D</span><span>Espero a ver si la reunión se reagenda pronto antes de arrancar otra cosa.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="instr-note">
+        💡 <strong>Recuerda:</strong> No hay respuestas buenas ni malas. El cuestionario busca entender cómo eres y cómo trabajas habitualmente — no cómo crees que deberías ser. Responde con honestidad.
+      </div>
+
+      <hr class="instr-divider">
+
+      <div class="instr-cta">
+        <p>Ya conoces los dos formatos. Cuando estés listo/a, haz clic para comenzar.</p>
+        <button class="btn" onclick="startTest()" id="beginBtn">Entendido, comenzar el cuestionario →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PANTALLA 3: PREGUNTAS ════════════════════════════════════════ -->
+<div id="screen-questions">
+  <div class="q-wrap">
+    <div class="q-top">
+      <span class="q-counter-pill" id="qCounterPill">1 / 48</span>
+    </div>
+    <div class="q-progress-bar-wrap">
+      <div class="q-progress-bar-fill" id="qProgressFill" style="width:0%"></div>
+    </div>
+    <div id="qCard"></div>
+  </div>
+</div>
+
+<!-- ═══ PANTALLA 4A: GRACIAS (postulante) ════════════════════════════ -->
+<div id="screen-thankyou">
+  <div class="ty-wrap">
+    <div style="width:68px;height:68px;background:var(--light-red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:30px;">✓</div>
+    <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Evaluación completada</div>
+    <h2 style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--dark-red);margin-bottom:14px;">¡Gracias por completar la evaluación!</h2>
+    <p style="font-size:14px;color:var(--gray-mid);line-height:1.7;margin-bottom:10px;">Hemos recibido tus respuestas correctamente. El equipo de Personas de Austral Pack se pondrá en contacto contigo a la brevedad.</p>
+    <p style="font-size:13px;color:var(--gray-mid);">Consultas: <strong style="color:var(--dark-red);">rodrigo.figueroa@australpack.cl</strong></p>
+    <div style="margin-top:28px;padding:18px;background:var(--light-red);border-radius:10px;font-size:13px;color:var(--dark-red);">Austral Pack S.A. · Sustentabilidad e innovación en packaging</div>
+  </div>
+</div>
+
+<!-- ═══ PANTALLA 4B: RESULTADOS (reclutador) ═════════════════════════ -->
+<div id="screen-results">
+  <div class="results-hdr">
+    <div class="ey">Resultado de la evaluación</div>
+    <h2 id="resultsName">—</h2>
+    <p id="resultsDate"></p>
+  </div>
+  <div id="resultsContent"></div>
+  <div class="r-actions">
+    <button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <button class="btn-ghost" onclick="copyResults()">Copiar resultados</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// SCORING KEY
+// ════════════════════════════════════════════════
+const SIT_KEY = {
+  'AS-S1':{A:4,B:4,C:2,D:1},'AS-S2':{A:4,B:4,C:2,D:1},
+  'AS-S3':{A:4,B:3,C:2,D:1},'AS-S4':{A:4,B:3,C:2,D:1},
+  'OL-S1':{A:4,B:3,C:2,D:1},'OL-S2':{A:4,B:3,C:2,D:1},
+  'OL-S3':{A:4,B:3,C:2,D:1},'OL-S4':{A:4,B:3,C:2,D:1},
+  'EE-S1':{A:4,B:3,C:2,D:1},'EE-S2':{A:4,B:3,C:2,D:1},
+  'EE-S3':{A:4,B:3,C:2,D:1},'EE-S4':{A:4,B:3,C:2,D:1},
+  'GP-S1':{A:4,B:3,C:2,D:1},'GP-S2':{A:4,B:3,C:2,D:1},
+  'GP-S3':{A:4,B:3,C:2,D:1},'GP-S4':{A:4,B:3,C:2,D:1},
+};
+
+// ════════════════════════════════════════════════
+// ITEMS
+// ════════════════════════════════════════════════
+const ALL_ITEMS = [
+  {id:'E1',dim:'E',type:'likert',reverse:false,text:'Cuando entro a una sala donde no conozco a nadie, suelo ser quien inicia la primera conversación.'},
+  {id:'E2',dim:'E',type:'likert',reverse:false,text:'En eventos de networking, termino intercambiando contactos con personas de áreas que no son las mías.'},
+  {id:'E3',dim:'E',type:'likert',reverse:false,text:'Prefiero lanzar una propuesta incompleta y ajustarla sobre la marcha, a esperar a tenerla perfecta antes de compartirla.'},
+  {id:'E4',dim:'E',type:'likert',reverse:false,text:'En una sala llena de gente nueva, no me cuesta insertarme en conversaciones ya iniciadas sin sentir que interrumpo.'},
+  {id:'A1',dim:'A',type:'likert',reverse:false,text:'Cuando un cliente muestra frustración, primero intento entender qué le preocupa antes de defender mi posición.'},
+  {id:'A2',dim:'A',type:'likert',reverse:false,text:'A veces cambio mi recomendación inicial después de escuchar mejor las necesidades del interlocutor.'},
+  {id:'A3',dim:'A',type:'likert',reverse:false,text:'Me doy cuenta cuando alguien del equipo está pasando por algo difícil, aunque no me lo diga directamente.'},
+  {id:'A4',dim:'A',type:'likert',reverse:false,text:'He ajustado los términos de una propuesta al darme cuenta de que el cliente saldría perjudicado de una forma que inicialmente no había previsto.'},
+  {id:'C1',dim:'C',type:'likert',reverse:false,text:'Prefiero cerrar el seguimiento de una propuesta enviada antes de abrir una nueva oportunidad, aunque la nueva sea más atractiva.'},
+  {id:'C2',dim:'C',type:'likert',reverse:false,text:'Prefiero invertir tiempo en dejar un proceso bien estructurado, aunque eso signifique dedicarle más horas de lo estrictamente necesario.'},
+  {id:'C3',dim:'C',type:'likert',reverse:false,text:'He cumplido con entregas comprometidas aunque eso haya significado trabajar fuera de horario o renegociar otros planes.'},
+  {id:'C4',dim:'C',type:'likert',reverse:false,text:'He detectado errores en contratos o propuestas que otros habían pasado por alto antes de enviarlos.'},
+  {id:'N1',dim:'N',type:'likert',reverse:false,text:'Cuando un cliente presiona con plazos ajustados, mi ritmo de trabajo no se altera significativamente.'},
+  {id:'N2',dim:'N',type:'likert',reverse:false,text:'Después de una reunión tensa con un cliente difícil, puedo pasar a la siguiente actividad sin que me afecte el ánimo.'},
+  {id:'N3',dim:'N',type:'likert',reverse:false,text:'Mis colegas no necesitan adivinar mi estado de ánimo para saber cómo estoy ese día.'},
+  {id:'N4',dim:'N',type:'likert',reverse:false,text:'Cuando pierdo una oportunidad importante, suelo estar enfocado/a en la siguiente en menos de un día.'},
+  {id:'O1',dim:'O',type:'likert',reverse:false,text:"Cuando un cliente dice 'eso no se puede hacer', mi primera reacción es pensar en alternativas no obvias."},
+  {id:'O2',dim:'O',type:'likert',reverse:false,text:'Puedo explicarle a un cliente un concepto técnico complejo usando un ejemplo de su propio proceso productivo.'},
+  {id:'O3',dim:'O',type:'likert',reverse:false,text:'Me atraen las oportunidades donde el enfoque habitual no ha funcionado y hay que diseñar algo desde cero.'},
+  {id:'O4',dim:'O',type:'likert',reverse:false,text:'He sugerido cambios en la forma de hacer algo en mi trabajo que luego fueron adoptados por otros, aunque al principio generaron resistencia.'},
+  {id:'AC1',dim:'AC',type:'likert',reverse:false,text:'Al final de un día intenso de visitas, tengo energía para hacer un contacto más si la oportunidad aparece.'},
+  {id:'AC2',dim:'AC',type:'likert',reverse:false,text:'Un día con solo una o dos reuniones me resulta menos satisfactorio que uno con múltiples desplazamientos y contactos.'},
+  {id:'AC3',dim:'AC',type:'likert',reverse:false,text:'Si pasan dos horas sin que haya avanzado algo concreto, siento la necesidad de generar alguna acción.'},
+  {id:'AC4',dim:'AC',type:'likert',reverse:false,text:'En períodos de alta exigencia, mantengo el ritmo de contactos con clientes aunque otras tareas queden postergadas.'},
+  {id:'AD1',dim:'AD',type:'likert',reverse:false,text:'Las tareas que me generan más resistencia suelen estar entre las primeras que planifico en mi día, aunque no tengan el deadline más cercano.'},
+  {id:'AD2',dim:'AD',type:'likert',reverse:false,text:'Cuando el día se me va en imprevistos y no toqué lo que había planificado, siento que no fue un buen día aunque haya resuelto cosas urgentes.'},
+  {id:'AD3',dim:'AD',type:'likert',reverse:false,text:'He llevado adelante procesos de venta que se extendieron más de lo previsto, en lugar de abandonarlos por oportunidades más rápidas.'},
+  {id:'AD4',dim:'AD',type:'likert',reverse:false,text:'He mantenido contacto activo con un cliente o proyecto durante meses aunque las señales de avance fueran débiles.'},
+  {id:'G1',dim:'GC',type:'likert',reverse:true,text:'Cuando un proceso de venta se alarga más de lo previsto, he sentido la tentación de dedicarle menos tiempo para enfocarme en oportunidades más recientes.'},
+  {id:'G2',dim:'GC',type:'likert',reverse:true,text:'He dejado de seguir procesos de venta que parecían prometedores al principio porque se extendieron demasiado en el tiempo.'},
+  {id:'G3',dim:'GC',type:'likert',reverse:true,text:'A mitad de un proceso de venta, he replanteado mi estrategia inicial por completo en lugar de ajustarla gradualmente.'},
+  {id:'G4',dim:'GC',type:'likert',reverse:true,text:'Prefiero los ciclos de venta con contacto frecuente y avances visibles; los procesos largos con mucha espera me resultan más desgastantes de lo que esperaba.'},
+  {id:'AS-S1',dim:'AS',type:'situational',context:'Un cliente histórico te pide un 10% de descuento argumentando que la competencia le ofrece lo mismo. No tienes autorización para bajar ese margen sin consultar.',text:'¿Qué haces?',options:[{key:'A',text:'Le pido que me muestre la oferta de la competencia por escrito antes de tomar cualquier decisión.'},{key:'B',text:'Le explico el valor diferencial de nuestra propuesta y mantengo el precio, al menos en primera instancia.'},{key:'C',text:'Le ofrezco un descuento menor (3–4%) para no perder el negocio y lo informo después.'},{key:'D',text:'Le digo que lo consulto con mi jefe y le respondo al día siguiente.'}]},
+  {id:'AS-S2',dim:'AS',type:'situational',context:'Estás presentando una propuesta a un comité de compras. Uno de los participantes interrumpe y dice que tu precio está muy por encima del mercado.',text:'¿Cómo reaccionas?',options:[{key:'A',text:'Pido que especifiquen con qué proveedor están comparando y en qué condiciones exactas.'},{key:'B',text:'Reconozco que el precio es más alto y explico por qué el valor justifica la diferencia.'},{key:'C',text:'Ofrezco revisar los números y volver con una propuesta ajustada.'},{key:'D',text:'Me pongo nervioso/a y pierdo el hilo de la presentación.'}]},
+  {id:'AS-S3',dim:'AS',type:'situational',context:'Llevas tres semanas intentando cerrar un contrato anual con un cliente grande. Hoy te dice que va a firmar con la competencia si no le mejoras las condiciones ahora mismo.',text:'¿Qué haces?',options:[{key:'A',text:'Le pregunto qué condiciones específicamente necesita mejorar antes de moverme.'},{key:'B',text:'Le digo que voy a ver qué puedo hacer dentro de mis márgenes, pero que necesito su compromiso si llegamos a acuerdo.'},{key:'C',text:'Cedo en las condiciones para no perder el contrato y lo arreglo después con mi jefe.'},{key:'D',text:'Le digo que lamentablemente no puedo hacer nada más y dejo que se vaya.'}]},
+  {id:'AS-S4',dim:'AS',type:'situational',context:'Tu gerente te pide que visites un cliente difícil que rechazó nuestra propuesta hace dos meses y que ningún otro ejecutivo quiere retomar.',text:'¿Cómo respondes?',options:[{key:'A',text:'Acepto y preparo un enfoque distinto al que se usó antes, buscando el ángulo que no se exploró.'},{key:'B',text:'Acepto pero pido información sobre por qué falló el intento anterior.'},{key:'C',text:'Acepto pero sin mucho entusiasmo, asumiendo que probablemente tampoco resultará.'},{key:'D',text:'Sugiero que sería mejor esperar a que el cliente nos contacte.'}]},
+  {id:'OL-S1',dim:'OL',type:'situational',context:'Estás a mitad de mes y vas al 60% de tu cuota. Tienes dos cuentas en negociación avanzada pero ninguna está cerrada. Quedan 10 días hábiles.',text:'¿Qué haces?',options:[{key:'A',text:'Priorizo cerrar las dos cuentas en curso y en paralelo abro dos o tres contactos nuevos por si alguna cae.'},{key:'B',text:'Me enfoco en cerrar las dos cuentas en curso y no disperso el esfuerzo.'},{key:'C',text:'Espero que las negociaciones avancen a su ritmo sin forzar el cierre.'},{key:'D',text:'Informo a mi jefe que probablemente no llegaré a la cuota este mes.'}]},
+  {id:'OL-S2',dim:'OL',type:'situational',context:'Tienes una semana de viaje a Chiloé con agenda armada. La noche antes, uno de tus clientes más importantes cancela la reunión sin dar explicaciones.',text:'¿Cómo lo manejas?',options:[{key:'A',text:'Reorganizo la agenda: busco otro cliente en la misma zona o adelanto una visita planificada para después.'},{key:'B',text:'Mantengo las reuniones restantes y al volver intento reagendar al cliente que canceló.'},{key:'C',text:'Evalúo si vale la pena hacer el viaje con la agenda reducida.'},{key:'D',text:'Cancelo o acorto el viaje dado que la reunión más importante cayó.'}]},
+  {id:'OL-S3',dim:'OL',type:'situational',context:'Llevas seis meses sin concretar ninguna cuenta nueva. Tus cuentas existentes están bien, pero no has abierto mercado. Tu jefe no te ha dicho nada todavía.',text:'¿Qué haces?',options:[{key:'A',text:'Lo identifico como un problema antes de que me lo digan y diseño un plan de prospección con metas concretas.'},{key:'B',text:'Reconozco el problema y lo converso con mi jefe para pedir orientación.'},{key:'C',text:'Asumo que mientras las cuentas existentes estén bien no hay urgencia.'},{key:'D',text:'Espero a que mi jefe lo plantee para actuar.'}]},
+  {id:'OL-S4',dim:'OL',type:'situational',context:'Te ofrecen hacerte cargo de una zona geográfica nueva que nadie ha trabajado antes, sin cartera de clientes existente. Implicaría más viajes y empezar desde cero.',text:'¿Cómo respondes?',options:[{key:'A',text:'Lo veo como una oportunidad y acepto, sabiendo que construir desde cero es donde más puedo demostrar.'},{key:'B',text:'Acepto con condiciones: pido recursos mínimos y un plazo razonable para mostrar resultados.'},{key:'C',text:'Lo pienso con cuidado porque empezar sin cartera es un riesgo para mi cuota.'},{key:'D',text:'Prefiero no asumir el riesgo y quedarme con la zona que ya conozco.'}]},
+  {id:'EE-S1',dim:'EE',type:'situational',context:'Un cliente al que dedicaste tres meses de trabajo te llama para decirte que firmó con la competencia. No te da muchas explicaciones.',text:'¿Cómo reaccionas?',options:[{key:'A',text:'Acuso recibo, le agradezco la relación y le digo que la puerta queda abierta. Internamente analizo qué pudo haber fallado.'},{key:'B',text:'Le pido feedback sobre qué fue lo que definió la decisión, sin cuestionarlo.'},{key:'C',text:'Me afecta bastante ese día pero al siguiente retomo el ritmo normal.'},{key:'D',text:'Me cuesta varios días salir del impacto y concentrarme en otras cuentas.'}]},
+  {id:'EE-S2',dim:'EE',type:'situational',context:'Estás en una visita a planta en Quellón. El jefe de producción te trata con impaciencia y descarta tu propuesta en menos de cinco minutos sin escucharte.',text:'¿Cómo reaccionas?',options:[{key:'A',text:'No me lo tomo personal. Busco un momento para retomar la conversación o pido una nueva reunión.'},{key:'B',text:'Termino la reunión con compostura y al salir analizo si hay algo que pude haber hecho diferente.'},{key:'C',text:'Termino la reunión visiblemente afectado/a y me cuesta continuar con el resto de la agenda.'},{key:'D',text:'Reacciono a la defensiva en el momento.'}]},
+  {id:'EE-S3',dim:'EE',type:'situational',context:'Llevas cuatro semanas con una racha mala: tres clientes perdidos, una queja de un cliente importante y un viaje que salió mal. Tu jefe te llama para revisar resultados.',text:'¿Cómo llegas a la reunión?',options:[{key:'A',text:'Llego con un análisis de lo que pasó y una propuesta de ajuste. No espero que me pregunten.'},{key:'B',text:'Llego preparado/a, reconozco los problemas y escucho el feedback.'},{key:'C',text:'Llego con algo de tensión pero logro mantener la compostura.'},{key:'D',text:'La racha me tiene agotado/a emocionalmente y me cuesta rendir en la reunión.'}]},
+  {id:'EE-S4',dim:'EE',type:'situational',context:'Un proveedor interno falla en una entrega y eso hace que pierdas a un cliente que ya estaba cerrado. El error no fue tuyo.',text:'¿Cómo lo gestionas?',options:[{key:'A',text:'Gestiono el daño con el cliente primero, luego converso el problema internamente con datos y sin dramatismo.'},{key:'B',text:'Me frustro internamente pero mantengo la calma con el cliente y resuelvo el problema.'},{key:'C',text:'Me cuesta separar la frustración del error ajeno de mi relación con el cliente.'},{key:'D',text:'Reacciono con molestia visible hacia el equipo interno frente al cliente.'}]},
+  {id:'GP-S1',dim:'GP',type:'situational',context:'Llevas ocho meses visitando a un cliente grande que siempre muestra interés pero nunca avanza. Tu jefe te sugiere que lo descartes y te enfoques en otros.',text:'¿Qué decides?',options:[{key:'A',text:'Pido un plazo más para un último intento con un enfoque diferente al que he usado hasta ahora.'},{key:'B',text:'Acepto el consejo pero antes de cerrar hago una última visita con algo concreto.'},{key:'C',text:'Lo descarto sin mucho cuestionamiento. Si mi jefe lo dice, probablemente tiene razón.'},{key:'D',text:'Ya llevaba tiempo pensando en descartarlo pero no me había atrevido a soltarlo.'}]},
+  {id:'GP-S2',dim:'GP',type:'situational',context:'Un proyecto en el que llevas meses trabajando enfrenta un obstáculo importante que lo pone en riesgo. Resolverlo requiere esfuerzo extra sin garantía de éxito.',text:'¿Qué haces?',options:[{key:'A',text:'Me involucro en resolver el obstáculo aunque no esté garantizado el resultado. El proceso también vale.'},{key:'B',text:'Evalúo si el esfuerzo extra tiene sentido dado el riesgo y decido con criterio, no por miedo.'},{key:'C',text:'Me desmotivo bastante cuando los proyectos se complican sin garantía de resultado.'},{key:'D',text:'Prefiero redirigir la energía a algo con más probabilidades de éxito.'}]},
+  {id:'GP-S3',dim:'GP',type:'situational',context:'Te asignan una cuenta que otro ejecutivo no logró desarrollar en un año. Te dicen que es "un cliente difícil".',text:'¿Cómo lo asumes?',options:[{key:'A',text:'Lo asumo como un desafío. Lo primero que hago es entender por qué el intento anterior no funcionó.'},{key:'B',text:'Acepto la cuenta pero con expectativas realistas sobre el tiempo que tomará.'},{key:'C',text:'Me genera cierta aprensión saber que alguien ya lo intentó sin éxito.'},{key:'D',text:'Preferiría que me asignaran una cuenta nueva en lugar de retomar algo que ya falló.'}]},
+  {id:'GP-S4',dim:'GP',type:'situational',context:'Estás en el mes 10 de un proceso de venta complejo. El cliente sigue evaluando y no da señales claras. No hay certeza de que cierre.',text:'¿Qué haces?',options:[{key:'A',text:'Mantengo el seguimiento activo y busco nuevas formas de agregar valor mientras espero.'},{key:'B',text:'Continúo el seguimiento pero con menor frecuencia, dando espacio al cliente.'},{key:'C',text:'Empiezo a perder motivación con este cliente y comienzo a bajar el ritmo.'},{key:'D',text:'A esta altura lo daría por perdido y redirigiría el esfuerzo.'}]},
+];
+
+const TOTAL = ALL_ITEMS.length;
+const LIKERT_LABELS = ['No me representa en absoluto','','','','Me representa plenamente'];
+const RECRUITER_PASS = 'Coopercooper666&';
+
+let currentIdx = 0;
+let answers = {};
+let candidateName = '';
+let userRole = null;
+let shuffledItems = [];
+
+// ── SHUFFLE ───────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ── DEMO INTERACTIONS ─────────────────────────────────
+function demoLikertPick(btn) {
+  document.querySelectorAll('#demoLikert .demo-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function demoSitPick(el) {
+  document.querySelectorAll('#demoSit .demo-sopt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// ── INTRO LOGIC ───────────────────────────────────────
+function onRoleChange() {
+  userRole = document.querySelector('input[name="role"]:checked')?.value || null;
+  document.getElementById('name-field').style.display     = userRole==='postulante' ? 'block' : 'none';
+  document.getElementById('password-field').style.display = userRole==='reclutador' ? 'block' : 'none';
+  document.getElementById('pass-error').style.display = 'none';
+  document.getElementById('recruiterPass').value = '';
+  checkStartBtn();
+}
+
+function checkStartBtn() {
+  const role = document.querySelector('input[name="role"]:checked')?.value;
+  let ok = !!role;
+  if (role==='postulante') ok = ok && document.getElementById('candidateName').value.trim().length >= 3;
+  if (role==='reclutador') ok = ok && document.getElementById('recruiterPass').value.length > 0;
+  document.getElementById('startBtn').disabled = !ok;
+}
+
+function goToInstructions() {
+  userRole = document.querySelector('input[name="role"]:checked')?.value;
+  if (!userRole) return;
+  if (userRole === 'reclutador') {
+    if (document.getElementById('recruiterPass').value !== RECRUITER_PASS) {
+      document.getElementById('pass-error').style.display = 'block'; return;
+    }
+    candidateName = 'Reclutador';
+  } else {
+    candidateName = document.getElementById('candidateName').value.trim();
+  }
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-instructions').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startTest() {
+  if (userRole === 'reclutador') {
+    document.getElementById('screen-instructions').style.display = 'none';
+    document.getElementById('screen-results').style.display = 'block';
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('resultsName').textContent = 'Panel de reclutador';
+    document.getElementById('resultsDate').textContent = new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    renderRecruiterEntry();
+    return;
+  }
+  shuffledItems = shuffle(ALL_ITEMS);
+  document.getElementById('screen-instructions').style.display = 'none';
+  document.getElementById('screen-questions').style.display = 'block';
+  currentIdx = 0;
+  renderQuestion(0);
+}
+
+// ── QUESTION RENDER ───────────────────────────────────
+function renderQuestion(idx) {
+  currentIdx = idx;
+  const item = shuffledItems[idx];
+  const pct = Math.round((idx / TOTAL) * 100);
+  document.getElementById('qCounterPill').textContent = `${idx+1} / ${TOTAL}`;
+  document.getElementById('qProgressFill').style.width = `${pct}%`;
+  document.getElementById('progressBar').style.width = `${pct}%`;
+
+  let content = '';
+  if (item.type === 'likert') {
+    const val = answers[item.id];
+    content = `
+      <div class="q-text">${item.text}</div>
+      <div class="likert-wrap">
+        <div class="likert-labels-row">${LIKERT_LABELS.map(l=>`<div class="lbl-txt">${l}</div>`).join('')}</div>
+        <div class="likert-btns">${[1,2,3,4,5].map(v=>`
+          <button class="lbtn ${val===v?'sel':''}" onclick="pickLikert(${v},this)">${v}</button>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    const val = answers[item.id];
+    if (!item._shuffled) {
+      item._shuffled = shuffle([...item.options]);
+    }
+    const displayOpts = item._shuffled;
+    content = `
+      ${item.context ? `<div class="q-context">${item.context}</div>` : ''}
+      <div class="q-text">${item.text}</div>
+      <div class="sit-opts">${displayOpts.map(o=>`
+        <button class="sbtn ${val===o.key?'sel':''}" onclick="pickSit('${o.key}',this)">
+          <span class="s-letter">${o.key}</span><span>${o.text}</span>
+        </button>`).join('')}
+      </div>`;
+  }
+  document.getElementById('qCard').innerHTML = `<div class="q-card">${content}</div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pickLikert(val, btn) {
+  answers[shuffledItems[currentIdx].id] = val;
+  btn.closest('.likert-btns').querySelectorAll('.lbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  setTimeout(()=>advance(), 380);
+}
+function pickSit(key, btn) {
+  answers[shuffledItems[currentIdx].id] = key;
+  btn.closest('.sit-opts').querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  setTimeout(()=>advance(), 380);
+}
+function advance() {
+  if (currentIdx < TOTAL-1) { renderQuestion(currentIdx+1); }
+  else { finishTest(); }
+}
+
+function finishTest() {
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('screen-questions').style.display = 'none';
+  if (userRole === 'postulante') {
+    document.getElementById('screen-thankyou').style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  document.getElementById('screen-results').style.display = 'block';
+  document.getElementById('resultsName').textContent = candidateName;
+  document.getElementById('resultsDate').textContent = `Evaluación completada el ${new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+  renderResults();
+  document.querySelector('.r-actions').style.display = 'flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── RECRUITER MODE ─────────────────────────────────────
+function renderRecruiterEntry() {
+  document.getElementById('resultsContent').innerHTML = `
+    <div style="max-width:540px;margin:0 auto;">
+      <div style="background:var(--light-red);border:1px solid var(--mid-red);border-radius:12px;padding:22px;margin-bottom:22px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;">Modo Reclutador</div>
+        <p style="font-size:14px;color:var(--dark-red);line-height:1.6;">Ingresa las respuestas del candidato/a o previsualiza el informe con datos de ejemplo.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:22px;">
+          <div style="font-size:15px;font-weight:600;color:var(--dark-red);margin-bottom:7px;">Ingresar respuestas del candidato/a</div>
+          <p style="font-size:13px;color:var(--gray-mid);margin-bottom:14px;">Responde las 48 preguntas según las respuestas del candidato/a para generar el informe.</p>
+          <button class="btn" onclick="startRecruiterTest()">Ingresar respuestas →</button>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:22px;">
+          <div style="font-size:15px;font-weight:600;color:var(--dark-red);margin-bottom:7px;">Ver ejemplo de informe</div>
+          <p style="font-size:13px;color:var(--gray-mid);margin-bottom:14px;">Previsualiza el formato con respuestas de ejemplo.</p>
+          <button class="btn-ghost" onclick="previewWithSampleData()">Ver ejemplo →</button>
+        </div>
+      </div>
+    </div>`;
+  document.querySelector('.r-actions').style.display = 'none';
+}
+
+function startRecruiterTest() {
+  document.getElementById('screen-results').style.display = 'none';
+  document.getElementById('screen-questions').style.display = 'block';
+  userRole = 'reclutador_test';
+  shuffledItems = shuffle(ALL_ITEMS);
+  currentIdx = 0; answers = {};
+  renderQuestion(0);
+}
+
+function previewWithSampleData() {
+  ALL_ITEMS.forEach(item=>{ answers[item.id] = item.type==='situational' ? 'A' : 4; });
+  document.getElementById('resultsName').textContent = 'Vista previa';
+  document.getElementById('resultsDate').textContent = `Vista previa · ${new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+  renderResults();
+  document.querySelector('.r-actions').style.display = 'flex';
+}
+
+// ── SCORING ───────────────────────────────────────────
+function scoreDim(dimId) {
+  const items = ALL_ITEMS.filter(i=>i.dim===dimId);
+  if (!items.length) return {pct:0};
+  let total = 0;
+  items.forEach(item=>{
+    if (item.type==='situational') { total += SIT_KEY[item.id][answers[item.id]||'C']||2; }
+    else { let v=answers[item.id]||3; if(item.reverse) v=6-v; total+=v; }
+  });
+  const isSit=['AS','OL','EE','GP'].includes(dimId);
+  const min=items.length, max=items.length*(isSit?4:5);
+  return {pct:Math.round(((total-min)/(max-min))*100)};
+}
+
+function scoreGrit() {
+  const gcItems=ALL_ITEMS.filter(i=>i.dim==='GC');
+  let gcT=0; gcItems.forEach(i=>{let v=answers[i.id]||3; if(i.reverse)v=6-v; gcT+=v;});
+  const gcPct=Math.round(((gcT-gcItems.length)/(gcItems.length*4))*100);
+  const gpItems=ALL_ITEMS.filter(i=>i.dim==='GP');
+  let gpT=0; gpItems.forEach(i=>{gpT+=SIT_KEY[i.id][answers[i.id]||'C']||2;});
+  const gpPct=Math.round(((gpT-gpItems.length)/(gpItems.length*3))*100);
+  return {pct:Math.round((gcPct+gpPct)/2),gcPct,gpPct};
+}
+
+// ── INTERPRETATIONS ───────────────────────────────────
+const INTERP={
+  E:{high:'<strong>Alta extraversión.</strong> Toma iniciativa social con naturalidad. Perfil adecuado para trabajo en terreno y gestión de cuentas.',mid:'<strong>Extraversión moderada.</strong> Capaz de relacionarse efectivamente. Funcional para el rol.',low:'<strong>Introversión marcada.</strong> Evaluar en entrevista cómo maneja la exposición constante a clientes.'},
+  A:{high:'<strong>Alta amabilidad.</strong> Escucha activa, orientado/a al cliente. Favorece la construcción de confianza.',mid:'<strong>Amabilidad media.</strong> Orientación relacional funcional.',low:'<strong>Baja amabilidad.</strong> Explorar en entrevista si afecta relaciones comerciales de largo plazo.'},
+  C:{high:'<strong>Alta conscienciosidad.</strong> Predictor más robusto de desempeño en ventas (Vinchur et al., 1998). Organizado/a y cumplidor/a.',mid:'<strong>Conscienciosidad media.</strong> Funcional. Monitorear disciplina en seguimiento de cuentas.',low:'<strong>Baja conscienciosidad.</strong> Señal de alerta para un cargo con alta autonomía.'},
+  N:{high:'<strong>Alta estabilidad emocional.</strong> Manejo efectivo de la presión. Clave en ventas con ciclos largos.',mid:'<strong>Estabilidad emocional media.</strong> Funcional. Indagar estrategias de manejo del estrés.',low:'<strong>Baja estabilidad emocional.</strong> Puede afectar el desempeño ante presión sostenida.'},
+  O:{high:'<strong>Alta apertura.</strong> Busca alternativas no obvias. Adapta la propuesta al contexto técnico del cliente.',mid:'<strong>Apertura media.</strong> Perfil pragmático. Efectivo en venta de soluciones conocidas.',low:'<strong>Baja apertura.</strong> Puede resultar rígido/a ante contextos técnicos no estándar.'},
+  AS:{high:'<strong>Alta asertividad.</strong> Defiende el precio y el margen con criterio. No cede ante la primera presión.',mid:'<strong>Asertividad media.</strong> Puede ceder ante presión sostenida. Explorar en entrevista.',low:'<strong>Asertividad baja.</strong> Riesgo de ceder condiciones comerciales ante la presión del cliente.'},
+  AC:{high:'<strong>Alto nivel de actividad.</strong> Energía sostenida para trabajo en terreno intensivo.',mid:'<strong>Actividad media.</strong> Funcional. Monitorear en períodos de alta demanda.',low:'<strong>Actividad baja.</strong> Puede presentar dificultades con 3+ días semanales en terreno.'},
+  OL:{high:'<strong>Alta orientación al logro.</strong> Proactivo/a ante la cuota. No espera que los problemas lleguen.',mid:'<strong>Orientación al logro media.</strong> Evaluar motivación intrínseca vs extrínseca.',low:'<strong>Orientación al logro baja.</strong> Señal de alerta para cumplimiento de cuotas sin supervisión.'},
+  AD:{high:'<strong>Alta autodisciplina.</strong> Inicia tareas difíciles sin presión externa.',mid:'<strong>Autodisciplina media.</strong> Funcional con estructura clara de objetivos.',low:'<strong>Autodisciplina baja.</strong> Riesgo en un cargo sin jefatura comercial intermedia.'},
+  EE:{high:'<strong>Alta estabilidad situacional.</strong> Maneja el rechazo y la adversidad con compostura y criterio.',mid:'<strong>Estabilidad situacional media.</strong> Puede verse afectado/a en rachas difíciles prolongadas.',low:'<strong>Estabilidad situacional baja.</strong> El rechazo impacta visiblemente el rendimiento en terreno.'},
+  G:{high:'<strong>Alto Grit.</strong> Consistencia e intereses y perseverancia ante obstáculos. Muy relevante para ciclos de venta largos en salmonicultura.',mid:'<strong>Grit medio.</strong> Perseverancia funcional. Indagar sobre experiencias concretas de persistencia.',low:'<strong>Grit bajo.</strong> Riesgo de abandono ante ciclos de venta largos o clientes de desarrollo lento.'},
+};
+function itext(dim,p){const l=p>=65?'high':p>=40?'mid':'low';return INTERP[dim]?.[l]||'';}
+function bcls(p){return p>=65?'high':p>=40?'mid':'low';}
+function dc(name,label,s,dim){return `
+  <div class="dc">
+    <div class="dc-hdr"><div><div class="dc-name">${name}</div><div class="dc-label">${label}</div></div><div class="badge ${bcls(s.pct)}">${s.pct}%</div></div>
+    <div class="sbar"><div class="sfill" style="width:${s.pct}%"></div></div>
+    <div class="di">${itext(dim,s.pct)}</div>
+  </div>`;}
+
+function renderResults(){
+  const bf=[['E','Extraversión','Energía social y terreno'],['C','Conscienciosidad','Disciplina y cumplimiento'],['N','Estabilidad emocional','Manejo de presión y plazos'],['A','Amabilidad','Escucha y orientación al cliente'],['O','Apertura','Adaptación técnica y creatividad']];
+  const asS=scoreDim('AS'),olS=scoreDim('OL'),eeS=scoreDim('EE'),acS=scoreDim('AC'),adS=scoreDim('AD');
+  const grit=scoreGrit();
+  const bfS={};bf.forEach(([id])=>{bfS[id]=scoreDim(id);});
+  const dgv=Math.round(bfS['E'].pct*.20+bfS['C'].pct*.25+bfS['N'].pct*.15+asS.pct*.15+olS.pct*.10+eeS.pct*.10+grit.pct*.05);
+  const alerts=[];
+  if(eeS.pct<40)      alerts.push({t:'red',    txt:'<strong>Alerta — Estabilidad situacional baja:</strong> Reacciones emocionales ante el rechazo pueden impactar el rendimiento en terreno.'});
+  if(asS.pct<40)      alerts.push({t:'red',    txt:'<strong>Alerta — Asertividad baja:</strong> Riesgo de ceder precio o margen ante presión del cliente.'});
+  if(bfS['C'].pct<40) alerts.push({t:'red',    txt:'<strong>Alerta — Conscienciosidad baja:</strong> Señal de alerta para cumplimiento de cuotas sin supervisión directa.'});
+  if(grit.pct<40)     alerts.push({t:'yellow', txt:'<strong>Atención — Grit bajo:</strong> Indagar sobre persistencia ante obstáculos en ventas de ciclo largo.'});
+  if(olS.pct<40)      alerts.push({t:'yellow', txt:'<strong>Atención — Orientación al logro baja:</strong> Evaluar motivación intrínseca hacia el cumplimiento de metas.'});
+  if(bfS['E'].pct<40) alerts.push({t:'yellow', txt:'<strong>Atención — Extraversión baja:</strong> Evaluar en entrevista cómo maneja la exposición constante en terreno.'});
+  if(!alerts.length)  alerts.push({t:'green',  txt:'<strong>Sin alertas críticas.</strong> El perfil no muestra señales de alerta en las dimensiones críticas para el cargo.'});
+
+  document.getElementById('resultsContent').innerHTML=`
+    <div class="sdiv">Índice de Disposición Comercial</div>
+    <div class="dc fw" style="background:var(--dark-red);color:white;text-align:center;padding:30px;">
+      <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid-red);margin-bottom:7px;">Índice Global — KAM Materiales</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:52px;color:white;line-height:1;">${dgv}<span style="font-size:22px;opacity:.6">%</span></div>
+      <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:7px;">E×20% + C×25% + EE×15% + AS×15% + OL×10% + EE-Sit×10% + Grit×5%</div>
+      <div class="sbar" style="background:rgba(255,255,255,.15);margin-top:18px;"><div class="sfill" style="width:${dgv}%;background:white;"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.35);margin-top:3px;"><span>0%</span><span>Corte recomendado: 55%</span><span>100%</span></div>
+    </div>
+    <div class="sdiv">Alertas del perfil</div>
+    ${alerts.map(a=>`<div class="alert ${a.t}">${a.txt}</div>`).join('')}
+    <div class="sdiv">Personalidad general</div>
+    <div class="rg">${bf.map(([id,name,label])=>dc(name,label,bfS[id],id)).join('')}</div>
+    <div class="sdiv">Comportamiento laboral</div>
+    <div class="rg">${dc('Nivel de actividad','Energía en terreno',acS,'AC')}${dc('Autodisciplina','Autonomía sin supervisión',adS,'AD')}</div>
+    <div class="sdiv">Competencias situacionales</div>
+    <div class="rg">
+      ${dc('Asertividad','Defensa del precio y negociación',asS,'AS')}
+      ${dc('Orientación al logro','Foco en metas y apertura de mercado',olS,'OL')}
+      ${dc('Estabilidad situacional','Tolerancia al rechazo y la adversidad',eeS,'EE')}
+    </div>
+    <div class="sdiv">Perseverancia y consistencia</div>
+    <div class="dc fw">
+      <div class="dc-hdr"><div><div class="dc-name">Grit-S (Arco-Tirado et al., 2018)</div><div class="dc-label">Perseverancia · Consistencia de intereses</div></div><div class="badge ${bcls(grit.pct)}">${grit.pct}%</div></div>
+      <div class="sbar"><div class="sfill" style="width:${grit.pct}%"></div></div>
+      <div style="display:flex;gap:18px;margin-top:14px;">
+        <div style="flex:1;background:var(--gray-light);border-radius:8px;padding:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;">Consistencia del interés</div>
+          <div style="font-size:26px;font-weight:700;color:var(--dark-red);">${grit.gcPct}%</div>
+          <div class="sbar" style="margin-top:7px;"><div class="sfill" style="width:${grit.gcPct}%"></div></div>
+          <div style="font-size:12px;color:var(--gray-mid);margin-top:6px;">Mantiene el foco en procesos de venta de largo plazo</div>
+        </div>
+        <div style="flex:1;background:var(--gray-light);border-radius:8px;padding:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;">Perseverancia en el esfuerzo</div>
+          <div style="font-size:26px;font-weight:700;color:var(--dark-red);">${grit.gpPct}%</div>
+          <div class="sbar" style="margin-top:7px;"><div class="sfill" style="width:${grit.gpPct}%"></div></div>
+          <div style="font-size:12px;color:var(--gray-mid);margin-top:6px;">Persiste ante obstáculos sin garantía de resultado</div>
+        </div>
+      </div>
+      <div class="di" style="margin-top:14px;">${itext('G',grit.pct)}</div>
+    </div>
+    <div class="sdiv">Notas metodológicas</div>
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:22px;font-size:13px;color:var(--gray-mid);line-height:1.7;">
+      <p><strong style="color:var(--dark-red);">Instrumentos:</strong> Mini-IPIP positivamente formulado (Donnellan et al., 2006; Martínez-Molina & Arias, 2018, PeerJ 6:e5542), validado en Chile N=518. Facetas IPIP dominio público (Goldberg, 1999). Grit-S en español (Arco-Tirado et al., 2018, Frontiers in Psychology 9:96). Ítems situacionales con scoring por clave experta (Weekley & Ployhart, 2006).</p>
+      <p style="margin-top:9px;"><strong style="color:var(--dark-red);">Interpretación:</strong> Los percentiles son referencias internas sobre el puntaje bruto posible. No corresponden a baremos normativos poblacionales. Los resultados deben complementarse con entrevista por competencias antes de cualquier decisión de selección.</p>
+      <p style="margin-top:9px;"><strong style="color:var(--dark-red);">Uso:</strong> Exclusivo para el proceso de selección KAM Materiales 2026. Austral Pack S.A.</p>
+    </div>`;
+  setTimeout(()=>{
+    document.querySelectorAll('.sfill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>{b.style.width=w;},100);});
+  },200);
+}
+
+function copyResults(){
+  const dims=[['Extraversión',scoreDim('E').pct],['Conscienciosidad',scoreDim('C').pct],['Estabilidad emocional',scoreDim('N').pct],['Amabilidad',scoreDim('A').pct],['Apertura',scoreDim('O').pct],['Asertividad',scoreDim('AS').pct],['Orientación al logro',scoreDim('OL').pct],['Estabilidad situacional',scoreDim('EE').pct],['Nivel de actividad',scoreDim('AC').pct],['Autodisciplina',scoreDim('AD').pct],['Grit-S total',scoreGrit().pct]];
+  let t=`EVALUACIÓN DE PERFIL — KAM MATERIALES | AUSTRAL PACK\nCandidato/a: ${candidateName}\nFecha: ${new Date().toLocaleDateString('es-CL')}\n\n`;
+  dims.forEach(([n,p])=>{t+=`${n}: ${p}%\n`;});
+  navigator.clipboard.writeText(t).then(()=>alert('Resultados copiados al portapapeles.'));
+}
+</script>
+</body>
+</html>
