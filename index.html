@@ -41,15 +41,7 @@
   .field label { display:block; font-size:13px; font-weight:600; color:var(--gray-dark); margin-bottom:7px; }
   .field input { width:100%; padding:12px 15px; border:1.5px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--black); background:white; outline:none; transition:border-color .2s; }
   .field input:focus { border-color:var(--red); }
-  .role-row { display:flex; gap:12px; margin-top:4px; }
-  .role-opt { flex:1; cursor:pointer; }
-  .role-opt input { display:none; }
-  .role-lbl { display:flex; flex-direction:column; align-items:center; gap:7px; padding:15px 10px; border:1.5px solid var(--border); border-radius:10px; background:white; transition:all .2s; user-select:none; }
-  .role-opt:hover .role-lbl { border-color:var(--mid-red); background:var(--light-red); }
-  .role-opt input:checked + .role-lbl { border-color:var(--red); background:var(--light-red); box-shadow:0 0 0 3px rgba(200,37,42,.1); }
-  .role-icon { font-size:20px; }
-  .role-text { font-size:13px; font-weight:600; color:var(--gray-dark); }
-  .role-opt input:checked + .role-lbl .role-text { color:var(--red); }
+
 
   /* ── BUTTONS ── */
   .btn { background:var(--red); color:white; border:none; padding:14px 32px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s,transform .1s; display:inline-flex; align-items:center; gap:8px; }
@@ -185,20 +177,8 @@
         <div class="intro-meta-item"><span class="lbl">Confidencialidad</span><span class="val">Uso interno RRHH</span></div>
       </div>
       <div class="field">
-        <label>Estoy respondiendo como</label>
-        <div class="role-row">
-          <label class="role-opt"><input type="radio" name="role" value="postulante" onchange="onRoleChange()"><span class="role-lbl"><span class="role-icon">👤</span><span class="role-text">Postulante</span></span></label>
-          <label class="role-opt"><input type="radio" name="role" value="reclutador" onchange="onRoleChange()"><span class="role-lbl"><span class="role-icon">🔑</span><span class="role-text">Reclutador</span></span></label>
-        </div>
-      </div>
-      <div class="field" id="name-field" style="display:none;">
         <label for="candidateName">Nombre completo</label>
         <input type="text" id="candidateName" placeholder="Ingresa tu nombre completo" autocomplete="off" oninput="checkStartBtn()">
-      </div>
-      <div class="field" id="password-field" style="display:none;">
-        <label for="recruiterPass">Contraseña de acceso</label>
-        <input type="password" id="recruiterPass" placeholder="Ingresa la contraseña" autocomplete="off" oninput="checkStartBtn()" onkeydown="if(event.key==='Enter')goToInstructions()">
-        <div id="pass-error" style="color:var(--red);font-size:12px;margin-top:6px;display:none;">Contraseña incorrecta.</div>
       </div>
       <button class="btn" onclick="goToInstructions()" id="startBtn" disabled>Continuar →</button>
     </div>
@@ -218,7 +198,7 @@
       <!-- TIPO 1: LIKERT -->
       <div class="instr-section">
         <h3><span class="tag">TIPO 1</span> Escala de acuerdo</h3>
-        <p class="instr-desc">Se te presenta una afirmación. Debes indicar en qué medida te describe, usando una escala del <strong>1 al 5</strong>: donde 1 es "No me representa en absoluto" y 5 es "Me representa plenamente". Al seleccionar una opción, la pregunta avanza automáticamente.</p>
+        <p class="instr-desc">Se te presenta una afirmación. Debes indicar en qué medida te representa, usando una escala del <strong>1 al 5</strong>: donde 1 es "No me representa en absoluto" y 5 es "Me representa plenamente". Al seleccionar una opción, la pregunta avanza automáticamente.</p>
         <div class="example-box">
           <div class="example-label">Ejemplo — pruébalo tú</div>
           <div class="example-q">Prefiero tomar decisiones rápidas y ajustar sobre la marcha, antes que esperar a tener toda la información.</div>
@@ -411,49 +391,22 @@ function demoSitPick(el) {
 }
 
 // ── INTRO LOGIC ───────────────────────────────────────
-function onRoleChange() {
-  userRole = document.querySelector('input[name="role"]:checked')?.value || null;
-  document.getElementById('name-field').style.display     = userRole==='postulante' ? 'block' : 'none';
-  document.getElementById('password-field').style.display = userRole==='reclutador' ? 'block' : 'none';
-  document.getElementById('pass-error').style.display = 'none';
-  document.getElementById('recruiterPass').value = '';
-  checkStartBtn();
-}
+function onRoleChange() {}
 
 function checkStartBtn() {
-  const role = document.querySelector('input[name="role"]:checked')?.value;
-  let ok = !!role;
-  if (role==='postulante') ok = ok && document.getElementById('candidateName').value.trim().length >= 3;
-  if (role==='reclutador') ok = ok && document.getElementById('recruiterPass').value.length > 0;
-  document.getElementById('startBtn').disabled = !ok;
+  document.getElementById('startBtn').disabled = document.getElementById('candidateName').value.trim().length < 3;
 }
 
 function goToInstructions() {
-  userRole = document.querySelector('input[name="role"]:checked')?.value;
-  if (!userRole) return;
-  if (userRole === 'reclutador') {
-    if (document.getElementById('recruiterPass').value !== RECRUITER_PASS) {
-      document.getElementById('pass-error').style.display = 'block'; return;
-    }
-    candidateName = 'Reclutador';
-  } else {
-    candidateName = document.getElementById('candidateName').value.trim();
-  }
+  candidateName = document.getElementById('candidateName').value.trim();
+  if (!candidateName) return;
+  userRole = 'postulante';
   document.getElementById('screen-intro').style.display = 'none';
   document.getElementById('screen-instructions').style.display = 'block';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function startTest() {
-  if (userRole === 'reclutador') {
-    document.getElementById('screen-instructions').style.display = 'none';
-    document.getElementById('screen-results').style.display = 'block';
-    document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('resultsName').textContent = 'Panel de reclutador';
-    document.getElementById('resultsDate').textContent = new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    renderRecruiterEntry();
-    return;
-  }
   shuffledItems = shuffle(ALL_ITEMS);
   document.getElementById('screen-instructions').style.display = 'none';
   document.getElementById('screen-questions').style.display = 'block';
@@ -520,18 +473,9 @@ function advance() {
 function finishTest() {
   document.getElementById('progressBar').style.width = '100%';
   document.getElementById('screen-questions').style.display = 'none';
-  if (userRole === 'postulante') {
-    document.getElementById('screen-thankyou').style.display = 'block';
-    window.scrollTo({top:0,behavior:'smooth'});
-    sendResultsByEmail();
-    return;
-  }
-  document.getElementById('screen-results').style.display = 'block';
-  document.getElementById('resultsName').textContent = candidateName;
-  document.getElementById('resultsDate').textContent = `Evaluación completada el ${new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
-  renderResults();
-  document.querySelector('.r-actions').style.display = 'flex';
+  document.getElementById('screen-thankyou').style.display = 'block';
   window.scrollTo({top:0,behavior:'smooth'});
+  sendResultsByEmail();
 }
 
 function sendResultsByEmail() {
