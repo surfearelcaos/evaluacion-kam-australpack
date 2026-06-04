@@ -156,6 +156,8 @@
     .demo-likert,.demo-lbl-row { grid-template-columns:repeat(5,1fr); }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("nD0-T5Ccmq9JDy6lr");</script>
 </head>
 <body>
 
@@ -521,6 +523,7 @@ function finishTest() {
   if (userRole === 'postulante') {
     document.getElementById('screen-thankyou').style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
+    sendResultsByEmail();
     return;
   }
   document.getElementById('screen-results').style.display = 'block';
@@ -529,6 +532,97 @@ function finishTest() {
   renderResults();
   document.querySelector('.r-actions').style.display = 'flex';
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sendResultsByEmail() {
+  // Build scores
+  const bf = [
+    ['Extraversión',      scoreDim('E').pct],
+    ['Conscienciosidad',  scoreDim('C').pct],
+    ['Estabilidad emocional', scoreDim('N').pct],
+    ['Amabilidad',        scoreDim('A').pct],
+    ['Apertura',          scoreDim('O').pct],
+  ];
+  const asS  = scoreDim('AS');
+  const olS  = scoreDim('OL');
+  const eeS  = scoreDim('EE');
+  const acS  = scoreDim('AC');
+  const adS  = scoreDim('AD');
+  const grit = scoreGrit();
+  const bfS  = {};
+  bf.forEach(([,], i) => { bfS[['E','C','N','A','O'][i]] = scoreDim(['E','C','N','A','O'][i]); });
+  const dgv  = Math.round(
+    scoreDim('E').pct*.20 + scoreDim('C').pct*.25 + scoreDim('N').pct*.15 +
+    asS.pct*.15 + olS.pct*.10 + eeS.pct*.10 + grit.pct*.05
+  );
+
+  // Alerts
+  const alertLines = [];
+  if (eeS.pct<40)           alertLines.push('⚠ Alerta — Estabilidad situacional baja');
+  if (asS.pct<40)           alertLines.push('⚠ Alerta — Asertividad baja');
+  if (scoreDim('C').pct<40) alertLines.push('⚠ Alerta — Conscienciosidad baja');
+  if (grit.pct<40)          alertLines.push('· Atención — Grit bajo');
+  if (olS.pct<40)           alertLines.push('· Atención — Orientación al logro baja');
+  if (scoreDim('E').pct<40) alertLines.push('· Atención — Extraversión baja');
+  if (!alertLines.length)   alertLines.push('✓ Sin alertas críticas');
+
+  const rows = [
+    ...bf.map(([n,p]) => `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">${n}</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${p}%</td></tr>`),
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">Asertividad (situacional)</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${asS.pct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">Orientación al logro (situacional)</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${olS.pct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">Estabilidad situacional</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${eeS.pct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">Nivel de actividad</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${acS.pct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">Autodisciplina</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${adS.pct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">Grit-S total</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${grit.pct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;">↳ Consistencia del interés</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-weight:700;color:#C8252A;">${grit.gcPct}%</td></tr>`,
+    `<tr><td style="padding:6px 12px;">↳ Perseverancia en el esfuerzo</td><td style="padding:6px 12px;font-weight:700;color:#C8252A;">${grit.gpPct}%</td></tr>`,
+  ].join('');
+
+  const reportHTML = `
+<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+  <div style="background:#8B1519;padding:24px 28px;">
+    <div style="color:#E8A0A2;font-size:16px;font-weight:700;letter-spacing:.06em;">AUSTRAL PACK</div>
+    <div style="color:white;font-size:20px;margin-top:4px;">Evaluación de Perfil — KAM Materiales</div>
+  </div>
+
+  <div style="background:#FBEAEA;padding:16px 28px;border-bottom:1px solid #E2E2E2;">
+    <div style="font-size:13px;color:#8B1519;">Candidato/a: <strong>${candidateName}</strong></div>
+    <div style="font-size:13px;color:#8B1519;margin-top:2px;">Fecha: ${new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
+  </div>
+
+  <div style="padding:24px 28px;background:white;">
+    <div style="text-align:center;background:#8B1519;color:white;padding:20px;border-radius:8px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#E8A0A2;margin-bottom:4px;">Índice de Disposición Comercial</div>
+      <div style="font-size:48px;font-weight:700;">${dgv}%</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px;">Corte recomendado: 55%</div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;color:#C8252A;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid #E2E2E2;padding-bottom:6px;">Alertas del perfil</div>
+      ${alertLines.map(a => `<div style="font-size:13px;color:#333;padding:4px 0;">${a}</div>`).join('')}
+    </div>
+
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#C8252A;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid #E2E2E2;padding-bottom:6px;">Puntajes por dimensión</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        ${rows}
+      </table>
+    </div>
+
+    <div style="margin-top:24px;padding:14px;background:#F4F4F4;border-radius:6px;font-size:12px;color:#666;line-height:1.6;">
+      Los percentiles son referencias internas sobre el puntaje bruto posible. Los resultados deben complementarse con entrevista por competencias antes de cualquier decisión de selección.<br>
+      <strong style="color:#8B1519;">Uso exclusivo interno — Proceso KAM Materiales 2026 · Austral Pack S.A.</strong>
+    </div>
+  </div>
+</div>`;
+
+  emailjs.send('service_ksbo7qh', 'template_llrstk4', {
+    candidate_name: candidateName,
+    report_html: reportHTML,
+    date: new Date().toLocaleDateString('es-CL'),
+  })
+  .then(() => console.log('Informe enviado correctamente'))
+  .catch(err => console.error('Error al enviar informe:', err));
 }
 
 // ── RECRUITER MODE ─────────────────────────────────────
